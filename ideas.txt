@@ -1,0 +1,3 @@
+enviorment variables
+setenv VARIABLE value, the variables need to hold these values
+even when the process is forked.

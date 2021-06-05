@@ -5,36 +5,57 @@ use std::process::{Child, Command, Stdio};
 
 mod alias;
 
+pub fn string_to_static_str(s: String) -> &'static str {
+    Box::leak(s.into_boxed_str())
+}
 
-pub fn find_alias(ali: Split<&str>, av: &Vec<String>){
-    for i in ali{
-        for j in av{
+pub fn find_alias(input: Split<&str>, vector: &Vec<String>, res_vector: &Vec<String>, count: usize) -> String{
+    let mut st = String::from("");
+    let mut it = 0;
+    for i in input{
+        it = 0;
+        for (j, k) in vector.iter().zip(res_vector.iter()){
             if i.to_string() == *j{
-                println!("Found match");
+                println!("Found match: {:?}", *j);
+                println!("Resolved to {:?}", *k);
+                //let mut k = &*j;
+                let k_slice: &str = &k[..];
+                st.push_str(k_slice);
+                st.push_str(" ");
+                break;
             }
+            else if i.to_string() != *j{
+                if it == count-1 {
+                    st.push_str(i);
+                    st.push_str(" ");
+                }
+            }
+            it = it + 1;
         }
     }
+    return st;
 }
 
 fn main() -> std::io::Result<()> {
     let mut pln: bool = true;
     //init vector of aliases and load aliases into vector
-    let mut av: Vec<String> = Vec::new();
+    let mut an: Vec<String> = Vec::new();
+    let mut tn: Vec<String> = Vec::new();
     if let Ok(lines) = alias::read_lines("/home/red/.arshrc"){
         for line in lines{
             let sline = line.unwrap();
             let mut splines = sline.split(" # ");
             if splines.next().unwrap_or("") == "alias"{
-                av.push(splines.next().unwrap_or("").to_string());
+                an.push(splines.next().unwrap_or("").trim().to_string());
+                tn.push(splines.next().unwrap_or("").trim().to_string());
             }
         }
     }
 
-    println!("{:?}", av);
+    println!("{:?} and the true resolved values: {:?}", an, tn);
 
     loop {
         let path = env::current_dir()?;
-        // >> as prompt
         // need to explicitly flush this to ensure it prints before read_line
         print!("@@@{}@@@",path.display());
         if pln == true{
@@ -49,12 +70,13 @@ fn main() -> std::io::Result<()> {
 
         // read_line leaves a trailing newline, which trim removes
         // this needs to be peekable so we can determine when we are on the last command
-        let mut ali = input.trim().split(" ");
-
-        find_alias( ali, &av);
+        let ali = input.trim().split(" ");
         
-        //println!("{}", ali);
-        let mut commands = input.trim().split(" | ").peekable();
+        let a_input = find_alias( ali, &an, &tn, an.len());
+        
+        println!(" Resolved input (alias): {} ", a_input);
+
+        let mut commands = a_input.trim().split(" | ").peekable();
         let mut previous_command = None;
 
         while let Some(command) = commands.next()  {

@@ -11,14 +11,13 @@ pub fn string_to_static_str(s: String) -> &'static str {
 
 pub fn find_alias(input: Split<&str>, vector: &Vec<String>, res_vector: &Vec<String>, count: usize) -> String{
     let mut st = String::from("");
-    let mut it = 0;
+    let mut it;
     for i in input{
         it = 0;
         for (j, k) in vector.iter().zip(res_vector.iter()){
             if i.to_string() == *j{
                 println!("Found match: {:?}", *j);
                 println!("Resolved to {:?}", *k);
-                //let mut k = &*j;
                 let k_slice: &str = &k[..];
                 st.push_str(k_slice);
                 st.push_str(" ");

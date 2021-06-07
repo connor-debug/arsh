@@ -1,3 +1,11 @@
 enviorment variables
 setenv VARIABLE value, the variables need to hold these values
 even when the process is forked.
+
+encrypt config and dot files.
+
+handle the arror where one does not input a value at the shel
+
+for the command language, add simple ints and strings. push them onto a stack with their reference and the value that it holds at the same index number. To retrieve them, iterate through the vector.
+
+add abbreviation. They are simply alises that resolve in stdout terminal and do(or dont?) resolve when running shell scripts. 

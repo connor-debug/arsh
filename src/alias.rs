@@ -27,17 +27,9 @@ pub fn new_alias(command: String, mut args: SplitWhitespace){
     }
 }
 
-/*pub fn check_next(borrow: &SplitWhitespace) -> bool{
-    ///////
-    return true;
-
-}*/
-
 pub fn show_alias(command: String, _args: SplitWhitespace){
     println!("command: {}",command);
-
-    //open up .arshellrc and read off those aliases
-
+    
     if let Ok(lines) = read_lines("/home/red/.arshrc"){
         for line in lines{
             let sline = line.unwrap();

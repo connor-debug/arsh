@@ -8,32 +8,6 @@ pub fn string_to_static_str(s: String) -> &'static str {
     Box::leak(s.into_boxed_str())
 }
 
-pub fn find_alias(input: Split<&str>, vector: &Vec<String>, res_vector: &Vec<String>, count: usize) -> String{
-    let mut st = String::from("");
-    let mut it;
-    for i in input{
-        it = 0;
-        for (j, k) in vector.iter().zip(res_vector.iter()){
-            if i.to_string() == *j{
-                println!("Found match: {:?}", *j);
-                println!("Resolved to {:?}", *k);
-                let k_slice: &str = &k[..];
-                st.push_str(k_slice);
-                st.push_str(" ");
-                break;
-            }
-            else if i.to_string() != *j{
-                if it == count-1 {
-                    st.push_str(i);
-                    st.push_str(" ");
-                }
-            }
-            it = it + 1;
-        }
-    }
-    return st;
-}
-
 fn main() -> std::io::Result<()> {
     println!("Reading script...");
     let args: Vec<String> = env::args().collect();
@@ -62,19 +36,14 @@ fn main() -> std::io::Result<()> {
 
             let input = sline;
 
-            // read_line leaves a trailing newline, which trim removes
-            // this needs to be peekable so we can determine when we are on the last command
-            let ali = input.trim().split(" ");
-            
-            let a_input = find_alias( ali, &an, &tn, an.len());
-            let mut commands = a_input.trim().split(" | ").peekable();
+            let mut commands = input.trim().split(" | ").peekable();
             let mut previous_command = None;
 
             while let Some(command) = commands.next()  {
 
                 // everything after the first whitespace character is interpreted as args to the command
                 let mut parts = command.trim().split_whitespace();
-                let command = parts.next().unwrap();
+                let command = parts.next().unwrap_or("");
                 let args = parts;
 
                 if command == "help"{

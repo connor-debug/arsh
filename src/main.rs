@@ -1,38 +1,13 @@
-use std::{env, process::exit, str::Split};
+use std::{env, process::exit};
 use std::io::{stdin, stdout, Write};
 use std::path::Path;
 use std::process::{Child, Command, Stdio};
 
 mod alias;
+mod var;
 
 pub fn string_to_static_str(s: String) -> &'static str {
     Box::leak(s.into_boxed_str())
-}
-
-pub fn find_alias(input: Split<&str>, vector: &Vec<String>, res_vector: &Vec<String>, count: usize) -> String{
-    let mut st = String::from("");
-    let mut it;
-    for i in input{
-        it = 0;
-        for (j, k) in vector.iter().zip(res_vector.iter()){
-            if i.to_string() == *j{
-                println!("Found match: {:?}", *j);
-                println!("Resolved to {:?}", *k);
-                let k_slice: &str = &k[..];
-                st.push_str(k_slice);
-                st.push_str(" ");
-                break;
-            }
-            else if i.to_string() != *j{
-                if it == count-1 {
-                    st.push_str(i);
-                    st.push_str(" ");
-                }
-            }
-            it = it + 1;
-        }
-    }
-    return st;
 }
 
 fn main() -> std::io::Result<()> {
@@ -40,6 +15,11 @@ fn main() -> std::io::Result<()> {
     //init vector of aliases and load aliases into vector
     let mut an: Vec<String> = Vec::new();
     let mut tn: Vec<String> = Vec::new();
+    //variables psuedo stacks
+    let mut var_n: Vec<String> = Vec::new();
+    let mut var_v: Vec<String> = Vec::new();
+    var::init_var(&mut var_n, &mut var_v);
+
     if let Ok(lines) = alias::read_lines("/home/red/.arshrc"){
         for line in lines{
             let sline = line.unwrap();
@@ -51,12 +31,10 @@ fn main() -> std::io::Result<()> {
         }
     }
 
-    println!("{:?} and the true resolved values: {:?}", an, tn);
-
     loop {
         let path = env::current_dir()?;
         // need to explicitly flush this to ensure it prints before read_line
-        print!("@@@{}@@@",path.display());
+        print!("@{}@",path.display());
         if pln == true{
             println!();
         }
@@ -71,19 +49,22 @@ fn main() -> std::io::Result<()> {
         // this needs to be peekable so we can determine when we are on the last command
         let ali = input.trim().split(" ");
         
-        let a_input = find_alias( ali, &an, &tn, an.len());
-        
+        let a_input = alias::exchange_alias( ali, &an, &tn, an.len());
+        let y = a_input.trim().split(" ");
         println!(" Resolved input (alias): {} ", a_input);
+        //exchange those variables. shell variables and enviorment veriables.
+        //////here we need to exchange variables.
+        let av_input = alias::exchange_alias( y, &var_n, &var_v, var_n.len());
 
-        let mut commands = a_input.trim().split(" | ").peekable();
+        let mut commands = av_input.trim().split(" | ").peekable();
         let mut previous_command = None;
 
         while let Some(command) = commands.next()  {
 
             // everything after the first whitespace character is interpreted as args to the command
             let mut parts = command.trim().split_whitespace();
-            let command = parts.next().unwrap();
-            let args = parts;
+            let command = parts.next().unwrap_or("");
+            let mut args = parts;
 
             if command == "help"{
                 //print some stuff that shows 
@@ -91,14 +72,24 @@ fn main() -> std::io::Result<()> {
             }
 
             match command {
-                "show_alias" => {
+                "edit"=>{
+                    //iterate through vars for $EDITOR
+                }
+                "let"=>{
+                    var::new_var(&mut args, &mut var_n, &mut var_v);
+                }
+                // clear stack?
+                "showenv"=> {
+                    var::show_env(&mut var_n, &mut var_v);
+                }
+                "showalias" => {
                     //print help for options of show: alias, envoirment variables, information
                     alias::show_alias(command.to_string(), args);
                 }
                 "alias" => {
                     alias::new_alias(command.to_string(), args);
                 }
-                "#pln" => {
+                "pln" => {
                     print!("switching...");
                     if pln == true{
                         pln = false;

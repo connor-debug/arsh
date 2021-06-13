@@ -4,8 +4,12 @@ even when the process is forked.
 
 encrypt config and dot files.
 
-handle the arror where one does not input a value at the shel
+handle the arror where one does not input a value at the shell DONE
 
 for the command language, add simple ints and strings. push them onto a stack with their reference and the value that it holds at the same index number. To retrieve them, iterate through the vector.
 
-add abbreviation. They are simply alises that resolve in stdout terminal and do(or dont?) resolve when running shell scripts. 
+add abbreviation. They are simply alises that resolve in stdout terminal and do(or dont?) resolve when running shell scripts.
+
+you are not allowed to assign a number as a variable.
+
+add simple functions using evalexpr crates

@@ -1,16 +1,19 @@
 use std::{env, process::exit};
 use std::io::{stdin, stdout, Write};
-use std::path::Path;
+use std::path::{Path};
 use std::process::{Child, Command, Stdio};
+use coloriz::*;
 
 mod alias;
 mod var;
+mod color;
 
 pub fn string_to_static_str(s: String) -> &'static str {
     Box::leak(s.into_boxed_str())
 }
 
 fn main() -> std::io::Result<()> {
+    color::colors();
     let mut pln: bool = true;
     //init vector of aliases and load aliases into vector
     let mut an: Vec<String> = Vec::new();
@@ -20,7 +23,16 @@ fn main() -> std::io::Result<()> {
     let mut var_v: Vec<String> = Vec::new();
     var::init_var(&mut var_n, &mut var_v);
 
-    if let Ok(lines) = alias::read_lines("/home/red/.arshrc"){
+    let mut h_path = String::new();
+    let homestring = dirs::home_dir().unwrap();
+    let user = homestring.file_name();
+    let homestr = homestring.to_str().unwrap();
+    h_path.push_str(homestr);
+    h_path.push_str("/.arshrc");
+
+    alias::init_alias(&mut an, &mut tn, h_path);
+
+    /*if let Ok(lines) = alias::read_lines(h_path){
         for line in lines{
             let sline = line.unwrap();
             let mut splines = sline.split(" # ");
@@ -29,16 +41,19 @@ fn main() -> std::io::Result<()> {
                 tn.push(splines.next().unwrap_or("").trim().to_string());
             }
         }
-    }
+    }*/
 
     loop {
         let path = env::current_dir()?;
         // need to explicitly flush this to ensure it prints before read_line
-        print!("@{}@",path.display());
+        let text1 = user.unwrap().to_str().unwrap();
+        let text2 = path.display().to_string();
+        print!("{}{}{}", text1.fg(Color::BrightRed),"@".fg(Color::BrightRed),text2.fg(Color::BrightRed));
         if pln == true{
             println!();
         }
-        print!(">>");
+        let text = ">>";
+        print!("{}",text.fg(Color::BrightRed));
         
         stdout().flush().unwrap();
 
@@ -84,7 +99,7 @@ fn main() -> std::io::Result<()> {
                 }
                 "showalias" => {
                     //print help for options of show: alias, envoirment variables, information
-                    alias::show_alias(command.to_string(), args);
+                    alias::show_alias(&mut an, &mut tn);
                 }
                 "alias" => {
                     alias::new_alias(command.to_string(), args);

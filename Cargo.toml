@@ -9,3 +9,4 @@ edition = "2018"
 [dependencies]
 evalexpr = "6"
 dirs = "3.0"
+coloriz = "0.2.0"

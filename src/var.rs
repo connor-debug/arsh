@@ -1,4 +1,4 @@
-use std::{io::Split, str::SplitWhitespace};
+use std::{str::SplitWhitespace};
 use evalexpr::*;
 use std::io::{self, BufRead};
 use std::fs::{File};
@@ -6,15 +6,11 @@ use std::path::Path;
 
 extern crate dirs;
 
-pub fn exchange_var(input: Split<&str>, vector: &Vec<String>, res_vector: &Vec<String>, count: usize) -> String{
-    return "Hello".to_string();
-}
-
 pub fn init_var(var_n: &mut Vec<String>,var_v: &mut Vec<String>){
     var_n.push("$HOME".to_string());
     var_v.push(dirs::home_dir().unwrap().to_str().unwrap().to_string());
     var_n.push("$USER".to_string());
-    var_v.push("..".to_string());
+    var_v.push(dirs::home_dir().unwrap().file_name().unwrap().to_str().unwrap().to_string());
     var_n.push("$EDITOR".to_string());
     var_v.push("vim".to_string());
 }

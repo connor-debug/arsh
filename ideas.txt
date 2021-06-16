@@ -10,6 +10,12 @@ for the command language, add simple ints and strings. push them onto a stack wi
 
 add abbreviation. They are simply alises that resolve in stdout terminal and do(or dont?) resolve when running shell scripts.
 
-you are not allowed to assign a number as a variable.
+you are not allowed to assign a number as a variable. DONE (change it so that you can use numbers as non0first chars) 
 
 add simple functions using evalexpr crates
+
+press up key to access previous commands on a stack. ie add shell bindings.
+
+use ">" to redirect stdout to a file
+
+colors

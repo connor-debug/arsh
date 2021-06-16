@@ -4,6 +4,7 @@
 name = "arshell"
 version = "0.1.0"
 dependencies = [
+ "coloriz",
  "dirs",
  "evalexpr",
 ]
@@ -19,6 +20,15 @@ name = "cfg-if"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
+
+[[package]]
+name = "coloriz"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bc05e6b7db8b640b336a4854fa76d1ce20a139242f0288a93187818a60a8b47a"
+dependencies = [
+ "overload",
+]
 
 [[package]]
 name = "dirs"
@@ -62,6 +72,12 @@ name = "libc"
 version = "0.2.97"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "12b8adadd720df158f4d70dfe7ccc6adb0472d7c55ca83445f6a5ab3e36f8fb6"
+
+[[package]]
+name = "overload"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b15813163c1d831bf4a13c3610c05c0d03b39feb07f7e09fa234dac9b15aaf39"
 
 [[package]]
 name = "redox_syscall"
